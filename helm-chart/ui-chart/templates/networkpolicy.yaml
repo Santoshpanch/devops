@@ -1,32 +1,37 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
- name: {{ include "ui.fullname" . }}-networkpolicy
+  name: {{ include "ui.fullname" . }}-networkpolicy
+
 spec:
- podSelector:
-  matchLabels:
-   {{- include "ui.labels" . | nindent 4 }}
- policyTypes:
- - Ingress
- - Egress
-ingress:
-- from:
-  - namespaceSelector:{}
-  ports:
-  - protocol: TCP
-    port: 80
-egress:
-- to:
-  - podSelector:
-      matchLabels:
-       app: user-service
-  ports:
-  - protocol: TCP
-    port: 8081
-- to:
-  - podSelector:
-      matchLabels:
-       app: product-service
-  ports:
-  - protocol: TCP
-    port: 8082
+  podSelector:
+    matchLabels:
+      {{- include "ui.labels" . | nindent 6 }}
+
+  policyTypes:
+    - Ingress
+    - Egress
+
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 80
+
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: user-service
+      ports:
+        - protocol: TCP
+          port: 8081
+
+    - to:
+        - podSelector:
+            matchLabels:
+              app: product-service
+      ports:
+        - protocol: TCP
+          port: 8082
