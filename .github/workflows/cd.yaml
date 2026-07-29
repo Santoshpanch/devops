@@ -21,14 +21,25 @@ on:
         required: true
         type: string
         default: "development"
+      branch:
+        description: "Select branch"
+        required: true
+        type: choice
+        default: "development"
+        options:
+          - main
+          - develop
+          - qa
+          - uat
+          - prod
 
 env:
   AWS_REGION: ap-south-1
   EKS_CLUSTER: paymentology-prod-eks
-
   NAMESPACE: ${{ github.event.inputs.NAMESPACE }}
   SERVICE: ${{ github.event.inputs.service }}
   Image_Tag: ${{ github.event.inputs.image_tag }}
+  BRANCH: ${{ github.event.inputs.branch }}
 
 
 jobs:
@@ -65,7 +76,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add $VALUES_FILE
           git commit -m "Deploy ${SERVICE} image ${IMAGE_TAG}" || echo "No changes"
-          git push
+          git pull --rebase origin ${BRANCH}
+          git push origin ${BRANCH}
           
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
