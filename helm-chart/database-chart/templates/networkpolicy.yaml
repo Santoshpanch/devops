@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+ name:
+  {{ include "database.fullname" . }}-policy
+spec:
+ podSelector:
+  matchLabels:
+   app:mysql
+ policyTypes:
+ - Ingress
+ - Egress
+ ingress:
+ - from:
+   - podSelector:
+       matchLabels:
+        app: paymentology-user-service
+   - podSelector:
+       matchLabels:
+        app: paymentology-product-service
+   ports:
+   - protocol: TCP
+     port:3306
+ egress:
+ []

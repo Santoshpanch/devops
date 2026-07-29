@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:
+    {{ include "ui.fullname" . }}
+spec:
+  replicas:
+    {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+  {{- include "ui.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ui.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "ui.fullname" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      containers:
+      - name: ui
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+        ports:
+        - containerPort: {{ .Values.containerPort }}
+
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+
+        {{- with .Values.volumeMounts }}
+        volumeMounts:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 20
+
+        securityContext:
+          {{- toYaml .Values.containerSecurityContext | nindent 10 }}
+
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
