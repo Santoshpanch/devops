@@ -31,14 +31,14 @@ spec:
                 name: {{ include "user-service.fullname" . }}-config
             - secretRef:
                 name: {{ include "user-service.fullname" . }}-secret
+          securityContext:
+          {{- toYaml .Values.containerSecurityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
-            {{- toYaml . | nindent 10 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
-            securityContext:
-            {{- toYaml .Values.containerSecurityContext | nindent 12 }}
 
       {{- with .Values.volumes }}
       volumes:
