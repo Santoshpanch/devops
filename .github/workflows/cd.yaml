@@ -41,7 +41,6 @@ env:
   Image_Tag: ${{ github.event.inputs.image_tag }}
   BRANCH: ${{ github.event.inputs.branch }}
 
-
 jobs:
   deploy:
     name: Deploy Service
@@ -97,7 +96,7 @@ jobs:
         run: |
           SERVICE=${SERVICE}
           helm lint ./helm-chart/$SERVICE
-          
+
       - name: Deploy Helm Chart
         run: |
           SERVICE=${SERVICE}
@@ -106,4 +105,17 @@ jobs:
           --namespace $NAMESPACE \
           --create-namespace \
           --wait \
+<<<<<<< HEAD
           --timeout 10m
+=======
+          --timeout 10m \
+          --atomic \
+          --cleanup-on-fail
+
+      - name: Verify Deployment
+        run: |
+          SERVICE=${SERVICE}
+          kubectl rollout status deployment/$SERVICE \
+          -n $NAMESPACE \
+          --timeout=5m
+>>>>>>> 5e9dc95 (template fix)
