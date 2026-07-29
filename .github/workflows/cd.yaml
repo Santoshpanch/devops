@@ -1,5 +1,6 @@
 name: Deploy Helm Chart
-
+permissions:
+  contents: write
 on:
   workflow_dispatch:
     inputs:
@@ -60,6 +61,12 @@ jobs:
           sed -i "s/^  tag:.*/  tag: \"${IMAGE_TAG}\"/" $VALUES_FILE
           echo "Updated values.yaml"
           cat $VALUES_FILE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $VALUES_FILE
+          git commit -m "Deploy ${SERVICE} image ${IMAGE_TAG}" || echo "No changes"
+          git push
+          
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
