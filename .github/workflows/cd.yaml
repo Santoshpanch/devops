@@ -32,7 +32,7 @@ env:
 
 jobs:
   deploy:
-    name: Deploy ${SERVICE}
+    name: Deploy Service
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -50,7 +50,7 @@ jobs:
         run: |
           SERVICE=${SERVICE}
           IMAGE_TAG=${Image_Tag}
-          VALUES_FILE="helm/${SERVICE}/values.yaml"
+          VALUES_FILE="helm-chart/${SERVICE}/values.yaml"
 
           if [ ! -f "$VALUES_FILE" ]; then
             echo "values.yaml not found: $VALUES_FILE"
@@ -77,13 +77,13 @@ jobs:
       - name: Helm Lint
         run: |
           SERVICE=${SERVICE}
-          helm lint ./helm/$SERVICE
+          helm lint ./helm-chart/$SERVICE
           
       - name: Deploy Helm Chart
         run: |
           SERVICE=${SERVICE}
           helm upgrade --install $SERVICE \
-          ./helm/$SERVICE \
+          ./helm-chart/$SERVICE \
           --namespace $NAMESPACE \
           --create-namespace \
           --wait \
