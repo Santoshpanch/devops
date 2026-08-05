@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   repository: 519765643705.dkr.ecr.ap-south-1.amazonaws.com/paymentology/product-service
-  tag: "1.0.1"
+  tag: "1.0.0"
   pullPolicy: IfNotPresent
 labels:
   env: development
